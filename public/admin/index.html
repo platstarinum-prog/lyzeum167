@@ -11,23 +11,24 @@
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
     <script>
-      if (window.netlifyIdentity) {
+      // 🔥 СРАЗУ инициализация Identity
+      window.netlifyIdentity && window.netlifyIdentity.on("init", user => {
 
-        window.netlifyIdentity.on("init", user => {
+        // 👉 ВАЖНО: если пришёл invite token
+        if (window.location.hash.includes("invite_token")) {
+          window.netlifyIdentity.open();
+        }
 
-          // 🔥 ВАЖНО: обработка invite token
-          if (window.location.hash.includes("invite_token")) {
-            window.netlifyIdentity.open();
-          }
-
-          if (!user) {
-            window.netlifyIdentity.on("login", () => {
-              document.location.href = "/admin/";
-            });
-          }
-
+        // 👉 обычный логин flow
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
         });
 
+      });
+
+      // fallback (иногда init не срабатывает сразу)
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.init();
       }
     </script>
 
