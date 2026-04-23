@@ -3,53 +3,56 @@
   <head>
     <meta charset="utf-8" />
     <title>Admin</title>
+
+    <!-- Identity -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <!-- YAML parser (нужен Decap CMS) -->
+    <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
   </head>
 
   <body>
 
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <!-- CMS -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
     <script>
-      // 🔥 СРАЗУ инициализация Identity
-      window.netlifyIdentity && window.netlifyIdentity.on("init", user => {
+      // =========================
+      // 🔐 NETLIFY IDENTITY
+      // =========================
 
-        // 👉 ВАЖНО: если пришёл invite token
-        if (window.location.hash.includes("invite_token")) {
-          window.netlifyIdentity.open();
-        }
+      if (window.netlifyIdentity) {
 
-        // 👉 обычный логин flow
+        window.netlifyIdentity.on("init", user => {
+
+          // invite token (приглашение)
+          if (window.location.hash.includes("invite_token")) {
+            window.netlifyIdentity.open();
+          }
+
+        });
+
         window.netlifyIdentity.on("login", () => {
           document.location.href = "/admin/";
         });
 
-      });
-
-      // fallback (иногда init не срабатывает сразу)
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.init();
       }
+
+      // =========================
+      // 🧠 MANUAL CMS INIT FIX
+      // =========================
+
+      window.CMS_MANUAL_INIT = true;
+
+      fetch("/admin/config.yml")
+        .then(res => res.text())
+        .then(config => {
+          CMS.init({
+            config: jsyaml.load(config)
+          });
+        });
+
     </script>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-<script>
-  if (window.netlifyIdentity) {
-
-    window.netlifyIdentity.on("init", user => {
-
-      // 🔥 ловим invite token на главной странице
-      if (window.location.hash.includes("invite_token")) {
-        window.netlifyIdentity.open();
-      }
-
-    });
-
-    window.netlifyIdentity.on("login", () => {
-      document.location.href = "/admin/";
-    });
-
-  }
-</script>
   </body>
 </html>
