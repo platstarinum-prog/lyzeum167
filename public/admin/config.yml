@@ -7,12 +7,9 @@ public_folder: "/uploads"
 
 collections:
   - name: "news"
-    label: "Новости"
+    label: "News"
     folder: "content/news"
     create: true
-    slug: "{{slug}}"
     fields:
-      - { label: "Заголовок", name: "title", widget: "string" }
-      - { label: "Дата", name: "date", widget: "datetime" }
-      - { label: "Текст", name: "body", widget: "markdown" }
-      - { label: "Фото", name: "image", widget: "image" }
+      - { name: "title", label: "Title", widget: "string" }
+      - { name: "body", label: "Body", widget: "markdown" }
